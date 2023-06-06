@@ -59,11 +59,11 @@ class MovieApp:
             if values.get('Movie notes') is None:
                 print(
                     f"Movie Title - {keys}\nRating - {values['Rating']}\nYear of Release - {values['Year of Release']}"
-                    f"\nPoster Image Url - {values['Poster Image URL']}\n")
+                    f"\nPoster Image Url - {values['Poster Image Url']}\n")
             else:
                 print(
                     f"Movie Title - {keys}\nRating - {values['Rating']}\nYear of Release - {values['Year of Release']}"
-                    f"\nPoster Image Url - {values['Poster Image URL']}\nMovie Notes - {values['Movie notes']}\n")
+                    f"\nPoster Image Url - {values['Poster Image Url']}\nMovie Notes - {values['Movie notes']}\n")
         input("Press enter to continue ")
 
     def add_movie(self):
@@ -72,44 +72,15 @@ class MovieApp:
         :param:
         :return:
         """
-        movies = self._storage.list_movies()
-        search_title = input("Enter new movie name: ")
-        try:
-            url = f"https://www.omdbapi.com/?apikey={API_KEY_MOVIES}&t={search_title}"
-            response = requests.get(url)
-            response = response.json()
-            title = response.get('Title')
-            if title in movies:
-                print(f"Movie - {title}, already exists!")
-                input("Press enter to continue ")
-            elif response['Response'] == 'True':
-                year = response['Year']
-                rating = response['imdbRating']
-                poster_img_url = response['Poster']
-                country = response['Country']
-                self._storage.add_movie(title, year, rating, poster_img_url, country)
-                print(f"Movie - {title}, successfully added")
-            else:
-                print(f'Movie - {title}, can\'t be found')
-                input("Press enter to continue ")
-        except Exception:
-            print('Please check your internet connectivity')
-        input("\nPress enter to continue ")
+        self._storage.add_movie()
 
-    def del_movie(self):
+    def delete_movie(self):
         """
-        Define a del_movie function to delete and update the movie database
+            Define a delete_movie function to delete a movie from and update the movie database
         :param:
         :return:
         """
-        movies = self._storage.list_movies()
-        title = input("Enter movie to be deleted: ")
-        if title in movies:
-            self._storage.delete_movie(title)
-            print(f'Movie - {title}, successfully deleted')
-        else:
-            print(f"Movie {title}, doesn't exist: ")
-        input("\nPress enter to continue ")
+        self._storage.delete_movie()
 
     def update_movie(self):
         """
@@ -117,15 +88,8 @@ class MovieApp:
         :param:
         :return:
         """
-        movies = self._storage.list_movies()
-        title = input("Enter new movie name: ")
-        if title in movies:
-            notes = input('Enter a note about the movie: ')
-            self._storage.update_movie(title, notes)
-            print(f'Movie - {title}, successfully updated')
-        else:
-            print(f"Movie - {title}, doesn't exist: ")
-        input("\nPress enter to continue ")
+
+        self._storage.update_movie()
 
     @staticmethod
     def average_rating(movies):
@@ -304,7 +268,7 @@ class MovieApp:
 
         title = movie_data
         year = movies_data[movie_data]["Year of Release"]
-        image_url = movies_data[movie_data]["Poster Image URL"]
+        image_url = movies_data[movie_data]["Poster Image Url"]
         rating = movies_data[movie_data]["Rating"]
         country = movies_data.get(movie_data).get("Country")
         country = country.split(',')
@@ -367,13 +331,22 @@ class MovieApp:
             data = fileobj.read()
             replaced_data = data.replace("__TEMPLATE_TITLE__", template_title)
             replaced_data = replaced_data.replace("__TEMPLATE_MOVIE_GRID__", output)
-
-        with open(f"movie.html", "w") as fileobj:
-            fileobj.write(replaced_data)
-            print(f'Website was successfully generated to the file movie.html')
-        input("\nPress enter to continue ")
+        if self._storage.File_path == "movies_data.csv":
+            with open(f"csv_movie.html", "w") as fileobj:
+                fileobj.write(replaced_data)
+                print(f'Website was successfully generated to the file csv_movie.html')
+            input("\nPress enter to continue ")
+        elif self._storage.File_path == "movies_data.json":
+            with open(f"json_movie.html", "w") as fileobj:
+                fileobj.write(replaced_data)
+                print(f'Website was successfully generated to the file json_movie.html')
+            input("\nPress enter to continue ")
 
     def run(self):
+        """
+            runs the program logic
+        :return:
+        """
         while True:
             self.display_menu()
             user_input = int(input())
@@ -384,7 +357,7 @@ class MovieApp:
             elif user_input == 2:
                 self.add_movie()
             elif user_input == 3:
-                self.del_movie()
+                self.delete_movie()
             elif user_input == 4:
                 self.update_movie()
             elif user_input == 5:
