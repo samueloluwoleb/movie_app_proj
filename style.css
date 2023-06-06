@@ -1,0 +1,106 @@
+body {
+  background: #F5F5F0;
+  color: black;
+  font-family: Monaco;
+  max-width: auto;
+}
+
+.list-movies-title {
+  padding: 10px 0;
+  background: #009B50;
+  color: white;
+  text-align: center;
+  font-size: 16pt;
+}
+
+.movie-grid {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: center;
+  max-width: auto;
+}
+
+.container {
+ max-width: auto;
+}
+
+.movie-grid li {
+  padding: 10px 15px;
+  text-align: left;
+}
+
+.movie-title,
+.movie-year,
+.movie-rating {
+  font-size: 0.8em;
+  text-align: center;
+}
+
+.movie-title {
+  margin-top: 10px;
+}
+
+.movie-year {
+  color: #999;
+}
+
+
+.movie-poster {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    width: 128px;
+    height: 193px;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltip-text {
+  visibility: hidden;
+  width: 120px;
+  background-color: gray;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -60px;
+}
+
+.tooltip .tooltip-text::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -8px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: black transparent transparent transparent;
+}
+
+.tooltip:hover .tooltip-text {
+  visibility: visible;
+}
+
+.movie {
+  width: 140px;
+  position : relative;
+  text-align: center;
+}
+
+.country-flag {
+  position: absolute;
+  top: -6px;
+  right: -25px;
+  text-align: center;
+}
