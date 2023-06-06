@@ -59,11 +59,11 @@ class MovieApp:
             if values.get('Movie notes') is None:
                 print(
                     f"Movie Title - {keys}\nRating - {values['Rating']}\nYear of Release - {values['Year of Release']}"
-                    f"\nPoster Image Url - {values['Poster Image Url']}\n")
+                    f"\nPoster Image Url - {values['Poster Image URL']}\n")
             else:
                 print(
                     f"Movie Title - {keys}\nRating - {values['Rating']}\nYear of Release - {values['Year of Release']}"
-                    f"\nPoster Image Url - {values['Poster Image Url']}\nMovie Notes - {values['Movie notes']}\n")
+                    f"\nPoster Image Url - {values['Poster Image URL']}\nMovie Notes - {values['Movie notes']}\n")
         input("Press enter to continue ")
 
     def add_movie(self):
@@ -72,16 +72,13 @@ class MovieApp:
         :param:
         :return:
         """
-        movies_data = self._storage.load_data(self._storage.File_path)
+        movies = self._storage.list_movies()
         search_title = input("Enter new movie name: ")
         try:
             url = f"https://www.omdbapi.com/?apikey={API_KEY_MOVIES}&t={search_title}"
             response = requests.get(url)
             response = response.json()
             title = response.get('Title')
-            movies = []
-            for data in movies_data:
-                movies.append(data[0])
             if title in movies:
                 print(f"Movie - {title}, already exists!")
                 input("Press enter to continue ")
@@ -90,7 +87,7 @@ class MovieApp:
                 rating = response['imdbRating']
                 poster_img_url = response['Poster']
                 country = response['Country']
-                self._storage.add_movie(title, rating, year, poster_img_url, country)
+                self._storage.add_movie(title, year, rating, poster_img_url, country)
                 print(f"Movie - {title}, successfully added")
             else:
                 print(f'Movie - {title}, can\'t be found')
@@ -105,19 +102,14 @@ class MovieApp:
         :param:
         :return:
         """
-        movies_data = self._storage.load_data(self._storage.File_path)
+        movies = self._storage.list_movies()
         title = input("Enter movie to be deleted: ")
-        title_list = []
-        for data in movies_data:
-            title_list.append(data[0])
-        if title in title_list:
+        if title in movies:
             self._storage.delete_movie(title)
             print(f'Movie - {title}, successfully deleted')
         else:
             print(f"Movie {title}, doesn't exist: ")
         input("\nPress enter to continue ")
-
-
 
     def update_movie(self):
         """
@@ -125,19 +117,15 @@ class MovieApp:
         :param:
         :return:
         """
-        movies_data = self._storage.load_data(self._storage.File_path)
+        movies = self._storage.list_movies()
         title = input("Enter new movie name: ")
-        title_list = []
-        for data in movies_data:
-            title_list.append(data[0])
-        if title in title_list:
+        if title in movies:
             notes = input('Enter a note about the movie: ')
             self._storage.update_movie(title, notes)
-	    print(f'Movie - {title}, successfully updated')	
+            print(f'Movie - {title}, successfully updated')
         else:
             print(f"Movie - {title}, doesn't exist: ")
         input("\nPress enter to continue ")
-
 
     @staticmethod
     def average_rating(movies):
@@ -316,7 +304,7 @@ class MovieApp:
 
         title = movie_data
         year = movies_data[movie_data]["Year of Release"]
-        image_url = movies_data[movie_data]["Poster Image Url"]
+        image_url = movies_data[movie_data]["Poster Image URL"]
         rating = movies_data[movie_data]["Rating"]
         country = movies_data.get(movie_data).get("Country")
         country = country.split(',')

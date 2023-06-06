@@ -8,7 +8,7 @@ def main():
         Performs menu operations based on user input and selections
     :return:
     """
-    storage = StorageCsv('movies_data.csv')
+    storage = StorageJson('movies_data.json')
     movie_app = MovieApp(storage)
     movie_app.run()
 
