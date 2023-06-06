@@ -1,8 +1,5 @@
 from istorage import IStorage
 import csv
-import requests
-API_KEY_MOVIES = '1081add1'
-API_KEY_COUNTRY = '956/jP02ZyHN3MoeMmFIGA==yefiVIYSS2Je5JNC'
 
 
 class StorageCsv(IStorage):
@@ -50,95 +47,64 @@ class StorageCsv(IStorage):
                               'Poster Image Url': poster, 'Country': country, 'Movie notes': notes}
         return data
 
-    def add_movie(self):
+    def add_movie(self, title, rating, year, poster_img_url, country):
+        """
+            Adds a movie to the movies' database.
+            Loads the information from the JSON file, add the movie,
+            and saves it. The function doesn't need to validate the input.
+        :param title:
+        :param year:
+        :param rating:
+        :param poster_img_url:
+        :param country:
+        :return:
+        """
         movies_data = self.load_data(self.File_path)
-        search_title = input("Enter new movie name: ")
-        try:
-            url = f"https://www.omdbapi.com/?apikey={API_KEY_MOVIES}&t={search_title}"
-            response = requests.get(url)
-            response = response.json()
-            title = response.get('Title')
-            movies = []
-            for data in movies_data:
-                movies.append(data[0])
-            if title in movies:
-                print(f"Movie - {title}, already exists!")
-                input("Press enter to continue ")
-            elif response['Response'] == 'True':
-                year = response['Year']
-                rating = response['imdbRating']
-                poster_img_url = response['Poster']
-                country = response['Country']
-                new_movie = [title, rating, year, poster_img_url, country, '']
-                movies_data.append(new_movie)
-                print(f"Movie - {title}, successfully added")
-            else:
-                print(f'Movie - {title}, can\'t be found')
-            input("Press enter to continue ")
-        except Exception:
-            print('Please check your internet connectivity')
+        new_movie = [title, rating, year, poster_img_url, country, '']
+        movies_data.append(new_movie)
 
         with open(self.File_path, 'w', newline='') as file:
             writer = csv.writer(file)
             writer.writerow(['name', 'rating', 'year', 'poster', 'country', 'notes'])
             writer.writerows(movies_data)
-        input("\nPress enter to continue ")
 
-    def delete_movie(self):
+    def delete_movie(self, title):
         """
             Deletes a movie from the movies' database.
             Loads the information from the JSON file, deletes the movie,
             and saves it. The function doesn't need to validate the input.
-        :param:
+        :param title:
         :return:
         """
         movies_data = self.load_data(self.File_path)
-        title_list= []
         temp_list = []
-        title = input("Enter movie name to delete: ")
-
         for data in movies_data:
-            title_list.append(data[0])
-        if title in title_list:
-            for data in movies_data:
-                if data[0] == title:
-                    continue
-                else:
-                    temp_list.append(data)
-            movies_data = temp_list
+            if data[0] == title:
+                continue
+            else:
+                temp_list.append(data)
+        movies_data = temp_list
 
-            with open(self.File_path, 'w', newline='') as file:
-                writer = csv.writer(file)
-                writer.writerow(['name', 'rating', 'year', 'poster', 'country', 'notes'])
-                writer.writerows(movies_data)
-            print(f'Movie - {title}, successfully deleted')
-        else:
-            print(f"Movie - {title}, doesn't exist: ")
-        input("\nPress enter to continue ")
+        with open(self.File_path, 'w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(['name', 'rating', 'year', 'poster', 'country', 'notes'])
+            writer.writerows(movies_data)
 
-    def update_movie(self):
+    def update_movie(self, title, notes):
         """
             Updates a movie from the movies' database.
             Loads the information from the JSON file, updates the movie,
             and saves it. The function doesn't need to validate the input.
-        :param:
+        :param title:
+        :param notes:
         :return:
         """
         movies_data = self.load_data(self.File_path)
-        title = input("Enter movie name to update: ")
-        title_list = []
-        for data in movies_data:
-            title_list.append(data[0])
-        if title in title_list:
-            notes = input('Enter a note about the movie: ')
-            for count, data in enumerate(movies_data):
-                if data[0] == title:
-                    movies_data[count][5] = notes
-            with open(self.File_path, 'w', newline='') as file:
-                writer = csv.writer(file)
-                writer.writerow(['name', 'rating', 'year', 'poster', 'country', 'notes'])
-                writer.writerows(movies_data)
-                print(f'Movie - {title}, successfully updated')
-        else:
-            print(f"Movie - {title}, doesn't exist: ")
-        input("\nPress enter to continue ")
+        for count, data in enumerate(movies_data):
+            if data[0] == title:
+                movies_data[count][5] = notes
+
+        with open(self.File_path, 'w',newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(['name', 'rating', 'year', 'poster', 'country', 'notes'])
+            writer.writerows(movies_data)
